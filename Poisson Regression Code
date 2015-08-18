@@ -1,6 +1,6 @@
-#To make it reproducible:
+# To make it reproducible:
 set.seed(0)
-#Made-up data:
+# Made-up data:
 data <- data.frame(c(rep(4,250), rpois(250,3),rpois(500,2)),
                    c(rep("A",500),rep("B",500)),
                    c(sample(c("HIVD","stenosis"),1000, replace=T)),
@@ -11,7 +11,7 @@ colnames(data) <- c("Post_Treat_Interventions","Treatment","Diagnosis",
 
 head(data)
 
-## With this set up the first 500 subjects received treatment A
+## With this set-up the first 500 subjects received treatment A
 ## and had high number of post-treatment interventions (3 or 4) and were also older, 
 ##guaranteing that they will be significant factors in the following Poisson regression:
 
