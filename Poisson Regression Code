@@ -1,21 +1,20 @@
 # To make it reproducible:
 set.seed(0)
 # Made-up data:
-data <- data.frame(c(rep(4,250), rpois(250,3),rpois(500,2)),
-                   c(rep("A",500),rep("B",500)),
-                   c(sample(c("HIVD","stenosis"),1000, replace=T)),
-                   c(sample(c("caud.","interlam.","transforam."),1000, replace=T)),
-                   c(round(seq(from=100, to=50, length.out = 1000),digits = 1)))
-colnames(data) <- c("Post_Treat_Interventions","Treatment","Diagnosis",
-                    "Approach", "Age")
+data <- data.frame(c(rep(4,250), rpois(250,3), rpois(500,2)),
+                   c(rep("A",500), rep("B",500)),
+                   c(sample(c("HIVD","stenosis"), 1000, replace=T)),
+                   c(sample(c("caud.", "interlam.", "transforam."), 1000, replace=T)),
+                   c(round(seq(from=100, to = 50, length.out = 1000),digits = 1)))
+colnames(data) <- c("Post_Treat_Interventions", "Treatment", "Diagnosis", "Approach", "Age")
 
 head(data)
 
 ## With this set-up the first 500 subjects received treatment A
-## and had high number of post-treatment interventions (3 or 4) and were also older, 
-##guaranteing that they will be significant factors in the following Poisson regression:
+## and had high number of post-treatment interventions (3 or 4). They were also older, 
+## guaranteing that Treatment and Age will be significant factors in the following Poisson regression:
 
-POIS <-glm(Post_Treat_Interventions~Treatment+Diagnosis+Approach+Age,
+POIS <-glm(Post_Treat_Interventions ~ Treatment + Diagnosis + Approach + Age,
            family="poisson",data=data)
 
 exp(cbind(COEF=coef(POIS),confint(POIS)))
@@ -30,34 +29,34 @@ exp(cbind(COEF=coef(POIS),confint(POIS)))
 
 ## As expected, the CI for Age do not include 1 (i.e. it's a statistically significant factor in the regression),
 ## and we can expect a 1% increase in the number of post-procedure interventions with Age.
-## Also as per design, the cause of stenosis makes no difference, or the approach.
-## And Treatment B is indeed better, because it results in only 
+## Also as per design, the cause of stenosis (Diagnosis) makes no difference, or the Approach.
+## Treatment B is indeed better, because it results in only 
 ## 74% of the number or repeat interventions compared to treatment A.
 
 
-## As a word of caution, check the residual deviance against the degrees of freedom in...
+## Checking the residual deviance against the degrees of freedom in...
 
 summary(POIS)
 
-#Coefficients:
-#                     Estimate Std. Error z value Pr(>|z|)    
-#(Intercept)          0.365663   0.235280   1.554    0.120    
-#TreatmentB          -0.300597   0.077214  -3.893 9.90e-05 ***
-#Diagnosisstenosis   -0.039618   0.038232  -1.036    0.300    
-#Approachinterlam.   -0.047305   0.045948  -1.030    0.303    
-#Approachtransforam. -0.051217   0.046723  -1.096    0.273    
-#Age                  0.010728   0.002648   4.052 5.09e-05 ***
-#---
-#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# Coefficients:
+#                        Estimate    Std. Error    z value    Pr(>|z|)    
+# (Intercept)           0.365663     0.235280      1.554      0.120    
+# TreatmentB           -0.300597     0.077214     -3.893      9.90e-05 ***
+# Diagnosis stenosis   -0.039618     0.038232     -1.036      0.300    
+# Approach interlam.   -0.047305     0.045948     -1.030      0.303    
+# Approach transforam. -0.051217     0.046723     -1.096      0.273    
+# Age                   0.010728     0.002648      4.052      5.09e-05 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-#(Dispersion parameter for poisson family taken to be 1)
+# (Dispersion parameter for poisson family taken to be 1)
 
 #    Null deviance: 1025.76  on 999  degrees of freedom
-#Residual deviance:  791.69  on 994  degrees of freedom
-#AIC: 3465.1
+#    Residual deviance:  791.69  on 994  degrees of freedom
+#    AIC: 3465.1
 
 
-## And plot the residuals:
+## And plotting the residuals:
 
 plot(POIS$fitted, POIS$residuals)
 
