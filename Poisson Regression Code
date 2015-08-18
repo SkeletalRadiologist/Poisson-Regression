@@ -34,3 +34,15 @@ exp(cbind(COEF=coef(POIS),confint(POIS)))
 ## Also as per design, the cause of stenosis makes no difference, or the approach.
 ## And Treatment B is indeed better, because it results in only 
 ## 66% of the number or repeat interventions compared to treatment A.
+
+
+## As a word of caution, check the residual deviance against the degrees of freedom in...
+
+summary(POIS)
+
+## And plot the residuals:
+
+plot(POIS$fitted, POIS$residuals)
+
+## If after enetering the actual data the model is not a good fit, consider a quasi Poisson
+## or a negative binomial.
